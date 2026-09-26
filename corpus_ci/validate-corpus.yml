@@ -1,0 +1,28 @@
+name: Validate corpus
+
+# Da copiare nel repository corpus come .github/workflows/validate-corpus.yml
+# (insieme a scripts/validate_corpus.py e schema/front_matter.schema.json).
+# Impostare il check "validate" come obbligatorio nella branch protection di main.
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["corpus/**", "rejected/**", "schema/**", "scripts/validate_corpus.py"]
+  push:
+    branches: [main]
+    paths: ["corpus/**", "rejected/**", "schema/**", "scripts/validate_corpus.py"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml jsonschema
+      - name: Valida il corpus (solo approved in corpus/, solo rejected in rejected/)
+        run: python scripts/validate_corpus.py

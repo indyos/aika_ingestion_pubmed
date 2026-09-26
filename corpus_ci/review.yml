@@ -1,0 +1,92 @@
+name: Review documenti
+
+# Da copiare nel repository corpus come .github/workflows/review.yml (con scripts/review.py).
+# Uso: Actions → «Review documenti» → Run workflow → menu «Use workflow from»: scegliere il branch
+# della PR (ingest/…), poi compilare i campi. Il branch scelto nel menu è quello su cui si lavora.
+# Il file deve esistere sul branch scelto: i branch creati dopo il merge in main lo contengono; quelli
+# più vecchi vanno prima aggiornati («Update branch» nella PR).
+
+on:
+  workflow_dispatch:
+    inputs:
+      decision:
+        description: "Decisione"
+        required: true
+        type: choice
+        options: [approve, reject]
+      pmids:
+        description: "PMID separati da spazio o virgola; per approve anche: all-pending"
+        required: true
+        type: string
+      notes:
+        description: "Motivazione (obbligatoria per reject)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: review-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Solo branch di ingestion
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          case "$BRANCH" in
+            ingest/*) ;;
+            *) echo "::error::Scegli nel menu «Use workflow from» il branch della PR (ingest/…); ricevuto: $BRANCH"; exit 1 ;;
+          esac
+      # Gli strumenti vengono sempre da main; i documenti dal branch scelto nel menu.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: tools
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          path: work
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml jsonschema
+      - name: Applica la decisione
+        env:
+          DECISION: ${{ inputs.decision }}
+          PMIDS: ${{ inputs.pmids }}
+          NOTES: ${{ inputs.notes }}
+        run: |
+          python tools/scripts/review.py --root work \
+            --decision "$DECISION" --pmids "$PMIDS" --notes "$NOTES"
+      - name: Commit e push sul branch della PR
+        working-directory: work
+        env:
+          DECISION: ${{ inputs.decision }}
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da committare (documenti già nello stato richiesto)."
+            exit 0
+          fi
+          git commit -m "Revisione ($DECISION) da $ACTOR" -m "Applicata con il workflow «Review documenti»."
+          git push origin "HEAD:refs/heads/$BRANCH"
+      - name: Stato residuo del branch
+        continue-on-error: true
+        run: |
+          python tools/scripts/validate_corpus.py --root work --schema ../tools/schema/front_matter.schema.json | tee result.txt
+          {
+            echo "### Stato dopo la revisione"
+            echo '```'
+            tail -n 20 result.txt
+            echo '```'
+            echo "Se restano errori «pending» ci sono ancora documenti da approvare o rifiutare."
+          } >> "$GITHUB_STEP_SUMMARY"

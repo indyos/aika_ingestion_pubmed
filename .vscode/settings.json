@@ -1,0 +1,43 @@
+{
+  // Interprete: il .venv creato da `uv sync` nella cartella del progetto.
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+  "python.terminal.activateEnvironment": true,
+
+  // Test: pytest (le opzioni, compreso --block-network, sono in pyproject.toml).
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["tests"],
+
+  // Ruff = lint + format + ordinamento import, con le regole del pyproject.toml.
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+
+  // Pylance legge [tool.pyright] dal pyproject.toml (strict su src/), come `uv run pyright`.
+  "python.analysis.diagnosticMode": "workspace",
+
+  // Il corpus è deterministico byte per byte: fine riga LF e UTF-8 sempre.
+  "files.eol": "\n",
+  "files.encoding": "utf8",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  },
+
+  // Sulla console Windows senza questo i caratteri come ≤ e µ non si stampano.
+  "terminal.integrated.env.windows": {
+    "PYTHONUTF8": "1"
+  },
+
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true
+  }
+}

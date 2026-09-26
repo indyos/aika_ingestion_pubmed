@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmc-articleset>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="review-article" xml:lang="en">
+  <front>
+    <article-meta>
+      <article-id pub-id-type="pmc">1000002</article-id>
+      <article-id pub-id-type="pmid">10000002</article-id>
+      <title-group><article-title>Dietary potassium in peritoneal dialysis</article-title></title-group>
+      <permissions>
+        <license license-type="open-access">
+          <license-p>This is an open access article distributed under the terms of the <ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial License</ext-link>.</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>Plain unstructured abstract with <italic> spaced italics </italic> and a citation (<xref ref-type="bibr" rid="R1">1</xref>) plus ranges <xref ref-type="bibr" rid="R2">2</xref>-<xref ref-type="bibr" rid="R4">4</xref>.</p>
+      </abstract>
+      <abstract abstract-type="toc"><p>Short table-of-contents blurb.</p></abstract>
+      <abstract abstract-type="graphical"><p>Graphical abstract text that must not appear.</p></abstract>
+    </article-meta>
+  </front>
+  <body>
+    <p>Body paragraph before any section title, with a footnote marker<xref ref-type="fn" rid="fn1">*</xref> and a figure call-out (<xref ref-type="fig" rid="F2">Figure 2</xref>).</p>
+    <sec>
+      <sec>
+        <title>Untitled parent, titled child</title>
+        <p>Text with definition list:
+          <def-list>
+            <def-item><term>K</term><def><p>potassium</p></def></def-item>
+            <def-item><term>PD</term><def><p>peritoneal dialysis</p></def></def-item>
+          </def-list>
+        </p>
+        <p>1. Starts like an ordered list but is a paragraph.</p>
+        <p>- Starts like a bullet but is a paragraph.</p>
+        <p># Starts like a heading but is a paragraph.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Tables</title>
+      <table-wrap id="T2">
+        <label>Table 2</label>
+        <caption><p>Potassium content of selected foods.</p></caption>
+        <table>
+          <tr><th>Food</th><th>K (mg/100 g)</th></tr>
+          <tr><td>Banana<xref ref-type="table-fn" rid="tf1"><sup>b</sup></xref></td><td>358</td></tr>
+          <tr><td>Nested <table><tr><td>inner</td></tr></table> cell</td><td>n/a</td></tr>
+        </table>
+      </table-wrap>
+      <table-wrap id="T3">
+        <label>Table 3</label>
+        <caption><title>Table given only as an image</title></caption>
+        <graphic xlink:href="t3.jpg"/>
+      </table-wrap>
+    </sec>
+    <sec>
+      <title>Acknowledgements</title>
+      <p>Thanks to everyone.</p>
+    </sec>
+    <sec sec-type="COI-statement">
+      <title>Statement</title>
+      <p>Author X owns shares in a dietary supplement company.</p>
+    </sec>
+    <sec>
+      <title>Financial support</title>
+      <p>Grant number 12345 from the Example Agency.</p>
+    </sec>
+    <sec>
+      <title>Summary</title>
+      <p>Final text. Caf&#233; with combining accent: e&#769; should be NFC.</p>
+    </sec>
+  </body>
+</article>
+</pmc-articleset>

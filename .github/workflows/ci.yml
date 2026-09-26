@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Installa le dipendenze (uv.lock rispettato)
+        run: uv sync --locked
+      - name: Lint
+        run: uv run ruff check
+      - name: Formattazione
+        run: uv run ruff format --check
+      - name: Type check (pyright, strict su src/)
+        run: uv run pyright
+      - name: JSON Schema aggiornato
+        run: uv run aika-ingestion-pubmed schema --check
+      - name: Test (nessuna chiamata di rete verso NCBI)
+        run: uv run pytest

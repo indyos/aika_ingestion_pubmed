@@ -1,0 +1,99 @@
+# Configurazione del connettore PubMed.
+# I segreti NON stanno qui: NCBI_API_KEY, GITHUB_APP_ID, GITHUB_APP_INSTALLATION_ID e
+# GITHUB_APP_PRIVATE_KEY (oppure GITHUB_APP_PRIVATE_KEY_PATH) si leggono dall'ambiente.
+
+ncbi:
+  tool: aika_ingestion_pubmed
+  email: indyos71@gmail.com   # obbligatorio per NCBI: metti un contatto reale
+  batch_size: 100
+  timeout_s: 30
+  max_retries: 5
+
+search:
+  query: >-
+    ("Renal Dialysis"[Mesh] OR hemodialysis[TiAb])
+    AND ("Diet"[Majr] OR "Diet Therapy"[Majr] OR "Nutritional Requirements"[Majr]
+    OR "Nutritional Status"[Majr] OR "Nutrition Therapy"[Majr])
+    AND (english[la] OR italian[la])
+  mindate: "2021/01/01"
+  maxdate: "2026/12/31"
+  max_results: 200
+  sort: pub_date
+  # Solo articoli presenti in PMC (subset `pubmed pmc`). Verificato il 2026-09-26: sulla query
+  # attuale 271 → 129 risultati, gli stessi 129 con PMCID, nessuno perso. Non è l'Open Access
+  # Subset: la licenza (CC0/CC BY/CC BY-SA) resta controllata dal quality gate. I filtri
+  # "open access"[filter] e "pmc open access"[filter] NON esistono (0 risultati, frase non trovata).
+  extra_filter: "pubmed pmc[sb]"
+
+mapping:
+  # Ordine = priorità: vince la prima regola che trova un publication type corrispondente.
+  publication_type_doc_type:
+    - {publication_type: "Practice Guideline", doc_type: guideline}
+    - {publication_type: "Guideline", doc_type: guideline}
+    - {publication_type: "Consensus Development Conference", doc_type: consensus}
+    - {publication_type: "Meta-Analysis", doc_type: meta_analysis}
+    - {publication_type: "Systematic Review", doc_type: systematic_review}
+    - {publication_type: "Randomized Controlled Trial", doc_type: rct}
+    - {publication_type: "Observational Study", doc_type: observational}
+    - {publication_type: "Patient Education Handout", doc_type: patient_education}
+    - {publication_type: "Review", doc_type: narrative_review}
+  evidence_tier:
+    guideline: 1
+    systematic_review: 1
+    meta_analysis: 1
+    rct: 2
+    observational: 3
+    consensus: 4
+    narrative_review: 4
+    patient_education: 5
+    other: 5
+  # «Renal Dialysis» è volutamente non mappato: nel MeSH include sia emodialisi sia dialisi
+  # peritoneale, quindi resta `unspecified` e la modalità la conferma il revisore clinico.
+  mesh_modality:
+    "Hemodiafiltration": hemodialysis
+    "Hemofiltration": hemodialysis
+    "Peritoneal Dialysis": peritoneal_dialysis
+    "Peritoneal Dialysis, Continuous Ambulatory": peritoneal_dialysis
+    "Peritoneal Dialysis, Continuous Cycler-Assisted": peritoneal_dialysis
+    "Kidney Transplantation": transplant
+    "Renal Insufficiency, Chronic": ckd_non_dialysis
+  # Se presenti, `ckd_non_dialysis` viene scartata (il paziente è in dialisi).
+  dialysis_mesh_terms:
+    - "Renal Dialysis"
+    - "Renal Replacement Therapy"
+  # Vocabolario controllato dei topic (topic -> descrittori MeSH). Da validare con il clinico.
+  topics:
+    potassium: ["Potassium", "Potassium, Dietary", "Hyperkalemia", "Hypokalemia"]
+    phosphorus: ["Phosphorus", "Phosphorus, Dietary", "Hyperphosphatemia"]
+    protein_intake: ["Dietary Proteins", "Diet, Protein-Restricted"]
+    malnutrition: ["Malnutrition", "Protein-Energy Malnutrition", "Nutritional Status", "Nutrition Assessment", "Wasting Syndrome"]
+    sodium_fluid: ["Sodium, Dietary", "Diet, Sodium-Restricted", "Water-Electrolyte Balance", "Thirst"]
+    nutrition_support: ["Nutritional Support", "Enteral Nutrition", "Parenteral Nutrition", "Dietary Supplements"]
+    dietary_patterns: ["Diet, Mediterranean", "Diet, Vegetarian", "Diet, Vegan"]
+    diet_general: ["Diet", "Diet Therapy"]
+  population_pediatric_mesh: ["Child", "Child, Preschool", "Infant", "Infant, Newborn", "Adolescent"]
+  population_adult_mesh: ["Adult", "Young Adult", "Middle Aged", "Aged", "Aged, 80 and over"]
+
+quality:
+  min_body_chars: 1500
+  allowed_languages: [en, it]
+  # CC BY / CC BY-SA / CC0 sicuramente. CC BY-NC e CC BY-ND: decisione aperta (progetto no profit).
+  allowed_licenses:
+    - CC0-1.0
+    - CC-BY-4.0
+    - CC-BY-3.0
+    - CC-BY-SA-4.0
+    - CC-BY-SA-3.0
+
+corpus:
+  repo: indyos/aika_doc_ingestion     # owner/name del repository corpus su GitHub
+  local_path: ../aika_doc_ingestion          # clone locale con working tree pulito
+  remote: origin
+  base_branch: main
+  corpus_dir: corpus
+  max_pr_size: 20
+  branch_prefix: "ingest/"
+
+originals:
+  dir: originals                       # v1: salvataggio locale degli XML originali
+  base_uri: null                       # es. gs://bucket/pubmed per l'URI scritto in `original_uri`

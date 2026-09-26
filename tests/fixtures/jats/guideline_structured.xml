@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pmc-articleset PUBLIC "-//NLM//DTD ARTICLE SET 2.0//EN" "https://dtd.nlm.nih.gov/ncbi/pmc/articleset/nlm-articleset-2.0.dtd">
+<pmc-articleset>
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/" article-type="practice-guideline" xml:lang="en">
+  <front>
+    <journal-meta>
+      <journal-title-group><journal-title>Journal of Renal Nutrition (fixture)</journal-title></journal-title-group>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmcid">PMC1000001</article-id>
+      <article-id pub-id-type="pmid">10000001</article-id>
+      <article-id pub-id-type="doi">10.0000/fixture.0001</article-id>
+      <title-group>
+        <article-title>Nutritional management of adults on maintenance <italic>hemodialysis</italic>: a practice guideline</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author"><name><surname>Rossi</surname><given-names>Maria</given-names></name><xref ref-type="aff" rid="aff1">1</xref></contrib>
+        <aff id="aff1">Department of Nephrology, Example University Hospital</aff>
+      </contrib-group>
+      <permissions>
+        <copyright-statement>© 2024 The Authors</copyright-statement>
+        <license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/">
+          <ali:license_ref>https://creativecommons.org/licenses/by/4.0/</ali:license_ref>
+          <license-p>This is an open access article under the CC BY license.</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <title>Abstract</title>
+        <sec>
+          <title>Background</title>
+          <p>Protein-energy wasting affects up to 50% of patients on hemodialysis <xref ref-type="bibr" rid="B1">1</xref>.</p>
+        </sec>
+        <sec>
+          <title>Recommendations</title>
+          <p>We recommend 1.0&#8211;1.2 g/kg/day of protein and serum K<sup>+</sup> &#8804; 5.5 mmol/L (<xref ref-type="bibr" rid="B2">2</xref>, <xref ref-type="bibr" rid="B3">3</xref>).</p>
+        </sec>
+      </abstract>
+      <abstract abstract-type="graphical">
+        <p><fig id="ga1"><caption><title>Graphical abstract of the guideline.</title></caption><graphic xlink:href="ga1.jpg"/></fig></p>
+      </abstract>
+      <kwd-group><kwd>hemodialysis</kwd><kwd>nutrition</kwd></kwd-group>
+      <funding-group><funding-statement>Funded by the Example Foundation.</funding-statement></funding-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="s1" sec-type="intro">
+      <title>1. Introduction</title>
+      <p>Patients on <bold>maintenance hemodialysis</bold> lose about 10&#8211;12 g of amino acids per session<sup><xref ref-type="bibr" rid="B4">4</xref></sup>. Values such as 5.5&#160;mmol/L, 10<sup>9</sup>/L and 25&#160;&#181;mol/L must stay exact, as must H<sub>2</sub>O and <italic>P</italic> &lt; 0.05 [<xref ref-type="bibr" rid="B5">5</xref>&#8211;<xref ref-type="bibr" rid="B7">7</xref>]. See <xref ref-type="table" rid="T1">Table 1</xref> and the site <ext-link ext-link-type="uri" xlink:href="https://example.org/renal">renal guide</ext-link>.</p>
+      <p>Second paragraph with a * asterisk and an_underscore.</p>
+    </sec>
+    <sec id="s2">
+      <title>2. Methods</title>
+      <sec id="s2a">
+        <title>2.1 Search strategy</title>
+        <p>We searched three databases. The criteria were:</p>
+        <list list-type="bullet">
+          <list-item><p>adults aged &#8805;18 years;</p></list-item>
+          <list-item><p>on dialysis for &gt;3 months, including:</p>
+            <list list-type="order">
+              <list-item><p>hemodialysis;</p></list-item>
+              <list-item><p>hemodiafiltration.</p></list-item>
+            </list>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="s2b">
+        <title>2.2 Statistical analysis</title>
+        <p>The estimated effect was
+          <disp-formula id="e1"><alternatives><mml:math><mml:mi>x</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:math><tex-math>x = 1</tex-math></alternatives></disp-formula>
+          in all analyses.</p>
+      </sec>
+    </sec>
+    <sec id="s3">
+      <title>3. Results</title>
+      <p>Daily targets are summarised below.
+        <table-wrap id="T1" position="float">
+          <label>Table 1.</label>
+          <caption><title>Daily nutrient targets by dialysis modality</title><p>Values are per kg of ideal body weight.</p></caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr><th rowspan="2">Nutrient</th><th colspan="2" align="center">Modality</th></tr>
+              <tr><th>HD</th><th>PD</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Protein (g/kg/day)</td><td>1.0&#8211;1.2</td><td>1.0&#8211;1.2<sup>a</sup></td></tr>
+              <tr><td rowspan="2">Energy</td><td>25&#8211;35 kcal/kg</td><td>25&#8211;35 kcal/kg</td></tr>
+              <tr><td colspan="2">Individualise to activity level</td></tr>
+              <tr><td>Sodium | salt</td><td>&lt;2 g/day</td><td>&lt;2 g/day</td></tr>
+            </tbody>
+          </table>
+          <table-wrap-foot><fn id="tfn1"><label>a</label><p>Includes protein lost in dialysate.</p></fn></table-wrap-foot>
+        </table-wrap>
+        The table above is complete.</p>
+      <fig id="F1" fig-type="figure">
+        <label>Figure 1</label>
+        <caption><title>Flow of studies through the review.</title></caption>
+        <graphic xlink:href="f1.jpg"/>
+      </fig>
+      <boxed-text id="bx1"><caption><title>Key points</title></caption><p>Monitor serum potassium monthly.</p></boxed-text>
+    </sec>
+    <sec id="s4" sec-type="funding-information">
+      <title>Funding</title>
+      <p>This work was funded by the Example Foundation.</p>
+    </sec>
+    <sec id="s5">
+      <title>Conflict of Interest</title>
+      <p>The authors declare no competing interests.</p>
+    </sec>
+    <sec id="s6" sec-type="supplementary-material">
+      <title>Supplementary material</title>
+      <p>See <supplementary-material id="S1"><label>Supplementary file 1</label></supplementary-material>.</p>
+    </sec>
+  </body>
+  <back>
+    <ack><title>Acknowledgments</title><p>We thank the nurses.</p></ack>
+    <ref-list>
+      <title>References</title>
+      <ref id="B1"><label>1</label><mixed-citation>Author A. Wasting in dialysis. J Ren Nutr. 2020.</mixed-citation></ref>
+    </ref-list>
+    <fn-group><fn fn-type="conflict"><p>No conflicts.</p></fn></fn-group>
+  </back>
+</article>
+</pmc-articleset>

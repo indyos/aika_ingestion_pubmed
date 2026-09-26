@@ -1,0 +1,90 @@
+name: Review da commento
+
+# Da copiare nel repository corpus come .github/workflows/review-comment.yml
+# (con scripts/review.py e scripts/review_comment.py).
+# Uso: in una PR di ingestion → Files changed → commento sul file con `/approve` oppure
+# `/reject motivo…`. La decisione vale per quel documento.
+# Parte sia per i commenti singoli sia per le review inviate con «Finish your review»
+# (i commenti in bozza non generano eventi finché la review non viene inviata).
+
+on:
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: review-comment-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    # Pre-filtro economico; autore, repository e branch sono ricontrollati dallo script.
+    if: startsWith(github.event.pull_request.head.ref, 'ingest/')
+    runs-on: ubuntu-latest
+    steps:
+      # Strumenti da main; documenti dal branch della PR.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: tools
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: work
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Applica i comandi
+        id: apply
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          python tools/scripts/review_comment.py --root work \
+            --event-file "$GITHUB_EVENT_PATH" --event-name "$EVENT_NAME" --repo "$REPO" \
+            --results "$RUNNER_TEMP/results.json"
+      - name: Commit e push sul branch della PR
+        id: push
+        continue-on-error: true
+        working-directory: work
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da committare."
+            exit 0
+          fi
+          git commit -m "Revisione da commento di $ACTOR"
+          git push origin "HEAD:refs/heads/$BRANCH"
+      - name: Risposta e reazione sui commenti
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          PUSH_OUTCOME: ${{ steps.push.outcome }}
+        run: |
+          results="$RUNNER_TEMP/results.json"
+          [ -f "$results" ] || { echo "Nessun risultato (evento non pertinente)."; exit 0; }
+          jq -c '.[] | select(.reply != null)' "$results" | while read -r r; do
+            id=$(jq -r .id <<<"$r"); ok=$(jq -r .ok <<<"$r"); msg=$(jq -r .reply <<<"$r")
+            if [ "$PUSH_OUTCOME" != "success" ]; then ok=false; msg="⚠️ Commit non riuscito: vedi il log del job. ($msg)"; fi
+            if [ "$ok" = true ]; then reaction="+1"; else reaction="confused"; fi
+            gh api "repos/$REPO/pulls/comments/$id/reactions" -f content="$reaction" >/dev/null || true
+            gh api "repos/$REPO/pulls/$PR/comments/$id/replies" -f body="$msg" >/dev/null || true
+          done
+      - name: Esito
+        if: steps.apply.outcome != 'success' || steps.push.outcome != 'success'
+        run: exit 1

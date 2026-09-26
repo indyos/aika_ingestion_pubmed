@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+<PubmedArticleSet>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">10000001</PMID>
+      <Article PubModel="Print-Electronic">
+        <Journal>
+          <JournalIssue CitedMedium="Internet">
+            <Volume>34</Volume>
+            <PubDate><Year>2024</Year><Month>Mar</Month><Day>5</Day></PubDate>
+          </JournalIssue>
+          <Title>Journal of Renal Nutrition (fixture)</Title>
+        </Journal>
+        <ArticleTitle>Nutritional management of adults on maintenance hemodialysis: a practice guideline.</ArticleTitle>
+        <Abstract>
+          <AbstractText Label="BACKGROUND" NlmCategory="BACKGROUND">Protein-energy wasting affects up to 50% of patients on hemodialysis.</AbstractText>
+          <AbstractText Label="RECOMMENDATIONS" NlmCategory="CONCLUSIONS">We recommend 1.0-1.2 g/kg/day of protein and serum K<sup>+</sup> &lt;= 5.5 mmol/L.</AbstractText>
+        </Abstract>
+        <AuthorList CompleteYN="Y">
+          <Author ValidYN="Y"><LastName>Rossi</LastName><ForeName>Maria</ForeName><Initials>M</Initials></Author>
+          <Author ValidYN="Y"><CollectiveName>Renal Nutrition Working Group</CollectiveName></Author>
+        </AuthorList>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D017065">Practice Guideline</PublicationType>
+          <PublicationType UI="D016454">Review</PublicationType>
+        </PublicationTypeList>
+      </Article>
+      <MeshHeadingList>
+        <MeshHeading><DescriptorName UI="D006435" MajorTopicYN="N">Renal Dialysis</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D000073836" MajorTopicYN="N">Hemodiafiltration</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D011188" MajorTopicYN="Y">Potassium, Dietary</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D000328" MajorTopicYN="N">Adult</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading>
+      </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList>
+        <ArticleId IdType="pubmed">10000001</ArticleId>
+        <ArticleId IdType="doi">10.0000/fixture.0001</ArticleId>
+        <ArticleId IdType="pmc">PMC1000001</ArticleId>
+      </ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">10000002</PMID>
+      <Article PubModel="Print">
+        <Journal>
+          <JournalIssue CitedMedium="Print">
+            <PubDate><MedlineDate>2023 Jan-Feb</MedlineDate></PubDate>
+          </JournalIssue>
+          <Title>Peritoneal Dialysis Review (fixture)</Title>
+        </Journal>
+        <ArticleTitle>Dietary potassium in peritoneal dialysis.</ArticleTitle>
+        <Abstract>
+          <AbstractText>Plain unstructured abstract with spaced italics.</AbstractText>
+        </Abstract>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D016454">Review</PublicationType>
+        </PublicationTypeList>
+      </Article>
+      <MeshHeadingList>
+        <MeshHeading><DescriptorName UI="D010531" MajorTopicYN="N">Peritoneal Dialysis</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D011188" MajorTopicYN="N">Potassium</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D002648" MajorTopicYN="N">Child</DescriptorName></MeshHeading>
+        <MeshHeading><DescriptorName UI="D000328" MajorTopicYN="N">Adult</DescriptorName></MeshHeading>
+      </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList>
+        <ArticleId IdType="pubmed">10000002</ArticleId>
+        <ArticleId IdType="pmc">PMC1000002</ArticleId>
+      </ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">10000003</PMID>
+      <Article PubModel="Print">
+        <Journal>
+          <JournalIssue CitedMedium="Print"><PubDate><Year>2022</Year></PubDate></JournalIssue>
+          <Title>Some Journal (fixture)</Title>
+        </Journal>
+        <ArticleTitle>Abstract-only record without open access full text.</ArticleTitle>
+        <Abstract><AbstractText>Only the abstract is available.</AbstractText></Abstract>
+        <Language>eng</Language>
+        <PublicationTypeList><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList>
+      </Article>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList>
+        <ArticleId IdType="pubmed">10000003</ArticleId>
+        <ArticleId IdType="pmc">PMC1000003</ArticleId>
+      </ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">10000004</PMID>
+      <Article PubModel="Print">
+        <Journal>
+          <JournalIssue CitedMedium="Print"><PubDate><Year>2019</Year><Month>11</Month></PubDate></JournalIssue>
+          <Title>Some Journal (fixture)</Title>
+        </Journal>
+        <ArticleTitle>A retracted paper on renal diets.</ArticleTitle>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D016441">Retracted Publication</PublicationType>
+        </PublicationTypeList>
+      </Article>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList>
+        <ArticleId IdType="pubmed">10000004</ArticleId>
+        <ArticleId IdType="pmc">PMC1000004</ArticleId>
+      </ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">10000005</PMID>
+      <Article PubModel="Print">
+        <Journal>
+          <JournalIssue CitedMedium="Print"><PubDate><Year>2021</Year></PubDate></JournalIssue>
+          <Title>Some Journal (fixture)</Title>
+        </Journal>
+        <ArticleTitle>An article without a PMC identifier.</ArticleTitle>
+        <Language>eng</Language>
+        <PublicationTypeList><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList>
+      </Article>
+      <CommentsCorrectionsList>
+        <CommentsCorrections RefType="Cites"><RefSource>Other</RefSource></CommentsCorrections>
+      </CommentsCorrectionsList>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList><ArticleId IdType="pubmed">10000005</ArticleId></ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+</PubmedArticleSet>

@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Cache degli strumenti
+.pytest_cache/
+.ruff_cache/
+
+# XML originali scaricati (v1: salvataggio locale, vedi `originals` in config.yaml)
+/originals/
+
+# Segreti: mai nel repository (le credenziali si passano da variabili d'ambiente)
+.env
+*.pem
+/.aika/
