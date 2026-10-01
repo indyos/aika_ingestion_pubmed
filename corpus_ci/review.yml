@@ -14,8 +14,8 @@ on:
         required: true
         type: choice
         options: [approve, reject]
-      pmids:
-        description: "PMID separati da spazio o virgola; per approve anche: all-pending"
+      ids:
+        description: "id (pmid-…/pdf-…/web-…) separati da spazio o virgola; per approve anche: all-pending"
         required: true
         type: string
       notes:
@@ -58,11 +58,11 @@ jobs:
       - name: Applica la decisione
         env:
           DECISION: ${{ inputs.decision }}
-          PMIDS: ${{ inputs.pmids }}
+          IDS: ${{ inputs.ids }}
           NOTES: ${{ inputs.notes }}
         run: |
           python tools/scripts/review.py --root work \
-            --decision "$DECISION" --pmids "$PMIDS" --notes "$NOTES"
+            --decision "$DECISION" --ids "$IDS" --notes "$NOTES"
       - name: Commit e push sul branch della PR
         working-directory: work
         env:

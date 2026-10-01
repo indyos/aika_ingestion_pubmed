@@ -3,16 +3,24 @@
 
 ``main`` deve contenere solo documenti **già revisionati**:
 
-* ``corpus/pmid-<PMID>.md``: solo ``curation_status: approved`` (i ``pending`` di una PR di
-  ingestion non superano il controllo: il revisore deve prima approvarli o rifiutarli);
-* ``rejected/pmid-<PMID>.md``: solo ``rejected``, con ``review_notes`` non vuoto (serve a non
-  riproporre il PMID);
-* un PMID non può stare in entrambe le cartelle.
+* ``corpus/<id>.md``: solo ``curation_status: approved`` (i ``pending`` di una PR di ingestion non
+  superano il controllo: il revisore deve prima approvarli o rifiutarli);
+* ``rejected/<id>.md``: solo ``rejected``, con ``review_notes`` non vuoto (serve a non riproporre
+  l'id);
+* un id non può stare in entrambe le cartelle.
 
-In ogni file si controllano inoltre: nome file ``pmid-<PMID>.md``, front matter valido secondo
-``schema/front_matter.schema.json``, ``id``/``pmid`` uguali al nome file (il JSON Schema non può
-verificarlo), ``pmcid`` presente in ``source_uri``, ``content_hash`` = sha256 del solo corpo, corpo
-non vuoto, nessun altro file o sottocartella.
+In ogni file si controllano inoltre: nome file ``<id>.md`` con ``id`` nel formato di uno dei
+connettori (``pmid-<PMID>``, ``pdf-<slug>``, ``web-<slug>`` — schema v2), front matter valido secondo
+``schema/front_matter.schema.json``, ``id`` uguale al nome file e (solo per ``pmid-*``) ``pmid``
+coerente (il JSON Schema non può verificarlo), ``pmcid`` presente in ``source_uri`` quando presente,
+``content_hash`` = sha256 del solo corpo, corpo non vuoto, nessun altro file o sottocartella.
+
+**Generalizzato (2026-09-30)** da PMID nudo a ``id`` con prefisso, per accettare anche i documenti di
+``aika_ingestion_pdf`` (schema v2) oltre a quelli v1 di questo connettore — verificato contro i 2
+documenti PMID reali già in ``corpus/`` del repo corpus e contro un documento generato dal codice
+reale di questo connettore (retrocompatibilità v1 confermata, non solo assunta), non verificato
+contro un documento ``pdf-*`` reale (nessuno ancora prodotto). Questa copia deve restare sincronizzata
+con ``aika_doc_ingestion/scripts/validate_corpus.py`` (il repo corpus).
 
 Dipendenze: ``pyyaml`` e ``jsonschema``. Exit code 1 se c'è almeno un errore.
 """
@@ -31,7 +39,9 @@ import jsonschema
 import yaml
 
 FENCE = "---\n"
-NAME_RE = re.compile(r"^pmid-([0-9]+)\.md$")
+# Stesso pattern id per i tre connettori (pmid-<PMID>, pdf-<slug>, web-<slug>) — vedi
+# aika_ingestion_common/src/aika_ingestion_common/models.py.
+NAME_RE = re.compile(r"^(pmid-[0-9]+|pdf-[a-z0-9][a-z0-9._-]*|web-[a-z0-9][a-z0-9._-]*)\.md$")
 
 
 class _Loader(yaml.SafeLoader):
@@ -62,8 +72,8 @@ def split_document(text: str) -> tuple[dict[str, Any], str]:
 def validate_file(path: Path, schema: dict[str, Any], *, expected_status: str) -> list[str]:
     match = NAME_RE.match(path.name)
     if not match:
-        return ["nome file non conforme a pmid-<PMID>.md"]
-    pmid = match.group(1)
+        return ["nome file non conforme a pmid-<PMID>.md / pdf-<slug>.md / web-<slug>.md"]
+    id_ = match.group(1)
     try:
         meta, body = split_document(path.read_text(encoding="utf-8"))
     except (ValueError, yaml.YAMLError, UnicodeDecodeError) as exc:
@@ -75,10 +85,12 @@ def validate_file(path: Path, schema: dict[str, Any], *, expected_status: str) -
             jsonschema.Draft202012Validator(schema).iter_errors(meta), key=lambda e: list(e.path)
         )
     ]
-    if meta.get("id") != f"pmid-{pmid}":
-        errors.append(f"id {meta.get('id')!r} diverso da pmid-{pmid} (nome file)")
-    if str(meta.get("pmid", pmid)) != pmid:
-        errors.append(f"pmid {meta.get('pmid')!r} diverso da {pmid} (nome file)")
+    if meta.get("id") != id_:
+        errors.append(f"id {meta.get('id')!r} diverso da {id_} (nome file)")
+    if id_.startswith("pmid-"):
+        pmid = id_.removeprefix("pmid-")
+        if str(meta.get("pmid", pmid)) != pmid:
+            errors.append(f"pmid {meta.get('pmid')!r} diverso da {pmid} (nome file)")
     pmcid, source_uri = meta.get("pmcid"), str(meta.get("source_uri", ""))
     if pmcid and str(pmcid) not in source_uri:
         errors.append(f"pmcid {pmcid} non presente in source_uri {source_uri}")
@@ -128,7 +140,7 @@ def main(argv: list[str] | None = None) -> int:
                 errors = validate_file(path, schema, expected_status=status)
                 match = NAME_RE.match(path.name)
                 if match and match.group(1) in seen:
-                    errors.append(f"PMID già presente in {seen[match.group(1)]}")
+                    errors.append(f"id già presente in {seen[match.group(1)]}")
                 elif match:
                     seen[match.group(1)] = rel
             for message in errors:

@@ -64,11 +64,11 @@ def _status(tree: Path, rel: str) -> str | None:
 
 def test_parse_comment() -> None:
     m = _comment()
-    assert m.parse_comment("/approve", DOC1) == ("approve", "10000001", "")
-    assert m.parse_comment("  /APPROVE ottimo", DOC1) == ("approve", "10000001", "ottimo")
+    assert m.parse_comment("/approve", DOC1) == ("approve", "pmid-10000001", "")
+    assert m.parse_comment("  /APPROVE ottimo", DOC1) == ("approve", "pmid-10000001", "ottimo")
     assert m.parse_comment("/reject fuori tema\nnon parla di dieta", DOC1) == (
         "reject",
-        "10000001",
+        "pmid-10000001",
         "fuori tema\nnon parla di dieta",
     )
     assert m.parse_comment("mi sembra ok", DOC1) is None
@@ -82,7 +82,7 @@ def test_single_comment_event_applies_to_the_commented_file(tree: Path, tmp_path
     ev = _event(comment=_c(11, "/approve", DOC1))
     code, results = _run(m, tree, tmp_path, "pull_request_review_comment", ev, [])
     assert code == 0 and results == [
-        {"id": 11, "ok": True, "changed": True, "reply": "✅ PMID 10000001 approvato."}
+        {"id": 11, "ok": True, "changed": True, "reply": "✅ `pmid-10000001` approvato."}
     ]
     assert _status(tree, DOC1) == "approved"
     assert _status(tree, DOC2) == "pending"  # gli altri file non cambiano

@@ -57,8 +57,8 @@ def test_script_output_is_byte_identical_to_connector(tree: Path) -> None:
         CurationStatus.REJECTED,
         "fuori tema: motivo",
     )
-    script.review(tree, decision="approve", pmids=["10000001"], notes="ok")
-    script.review(tree, decision="reject", pmids=["10000002"], notes="fuori tema: motivo")
+    script.review(tree, decision="approve", ids=["pmid-10000001"], notes="ok")
+    script.review(tree, decision="reject", ids=["pmid-10000002"], notes="fuori tema: motivo")
     assert (tree / "corpus/pmid-10000001.md").read_text(encoding="utf-8") == expected_ok
     assert (tree / "rejected/pmid-10000002.md").read_text(encoding="utf-8") == expected_ko
     assert not (tree / "corpus/pmid-10000002.md").exists()
@@ -68,9 +68,7 @@ def test_script_output_is_byte_identical_to_connector(tree: Path) -> None:
 
 def test_all_pending_and_main_cli(tree: Path) -> None:
     script = _script()
-    assert (
-        script.main(["--root", str(tree), "--decision", "approve", "--pmids", "all-pending"]) == 0
-    )
+    assert script.main(["--root", str(tree), "--decision", "approve", "--ids", "all-pending"]) == 0
     for pmid in ("10000001", "10000002"):
         text = (tree / f"corpus/pmid-{pmid}.md").read_text(encoding="utf-8")
         assert parse_document(text).curation_status == "approved"
@@ -81,11 +79,11 @@ def test_script_errors(tree: Path) -> None:
     script = _script()
     err = script.ReviewError
     with pytest.raises(err, match="motivazione"):
-        script.review(tree, decision="reject", pmids=["10000001"], notes="")
+        script.review(tree, decision="reject", ids=["pmid-10000001"], notes="")
     with pytest.raises(err, match="non presenti"):
-        script.review(tree, decision="approve", pmids=["99999999"], notes=None)
+        script.review(tree, decision="approve", ids=["pmid-99999999"], notes=None)
     with pytest.raises(err, match="non validi"):
-        script.review(tree, decision="approve", pmids=["abc"], notes=None)
+        script.review(tree, decision="approve", ids=["abc"], notes=None)
     with pytest.raises(err, match="solo con approve"):
-        script.review(tree, decision="reject", pmids=["all-pending"], notes="x")
-    assert script.main(["--root", str(tree), "--decision", "reject", "--pmids", "1"]) == 1
+        script.review(tree, decision="reject", ids=["all-pending"], notes="x")
+    assert script.main(["--root", str(tree), "--decision", "reject", "--ids", "pmid-1"]) == 1

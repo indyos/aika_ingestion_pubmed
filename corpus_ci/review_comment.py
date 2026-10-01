@@ -13,6 +13,10 @@ da entrambi gli eventi) non cambia nulla e non produce risposte in più. Le risp
 revisore sono scritte in ``--results`` (JSON) e pubblicate dal workflow.
 
 Exit code: 0 = tutto ok o nessun comando; 1 = almeno un comando non eseguibile.
+
+**Generalizzato (2026-09-30) da PMID nudo a ``id`` con prefisso** (``pmid-<PMID>``, ``pdf-<slug>``,
+``web-<slug>``) — stesso motivo di ``review.py``, vedi la sua docstring. Questa copia deve restare
+sincronizzata con ``aika_doc_ingestion/scripts/review_comment.py`` (il repo corpus).
 """
 
 from __future__ import annotations
@@ -30,7 +34,7 @@ from typing import Any
 from review import ReviewError, review, split_document
 
 COMMAND = re.compile(r"^/(approve|reject)\b[ \t]*(.*)\Z", re.IGNORECASE | re.DOTALL)
-FILE_PATH = re.compile(r"^corpus/pmid-([0-9]+)\.md$")
+FILE_PATH = re.compile(r"^corpus/(.+)\.md$")
 ALLOWED = {"OWNER", "MEMBER", "COLLABORATOR"}
 API = "https://api.github.com"
 
@@ -38,7 +42,7 @@ type Fetch = Callable[[str], list[dict[str, Any]]]
 
 
 def parse_comment(body: str, path: str) -> tuple[str, str, str] | None:
-    """(decisione, PMID, motivazione) se il commento è un comando valido, None se non lo è."""
+    """(decisione, id, motivazione) se il commento è un comando valido, None se non lo è."""
     match = COMMAND.match(body.strip())
     if not match:
         return None
@@ -66,21 +70,21 @@ def apply_comment(root: Path, comment: dict[str, Any]) -> dict[str, Any] | None:
             return None
         if comment.get("author_association") not in ALLOWED:
             raise ReviewError("solo proprietario, membri e collaboratori possono decidere")
-        decision, pmid, notes = parsed
-        in_corpus = _status(root / f"corpus/pmid-{pmid}.md")
-        in_rejected = _status(root / f"rejected/pmid-{pmid}.md")
+        decision, id_, notes = parsed
+        in_corpus = _status(root / f"corpus/{id_}.md")
+        in_rejected = _status(root / f"rejected/{id_}.md")
         if decision == "approve" and in_corpus == "approved":
             return result  # già fatto: nessuna risposta
         if decision == "reject" and in_rejected == "rejected":
             return result
         if decision == "approve" and in_rejected is not None:
-            raise ReviewError(f"PMID {pmid} è già stato rifiutato (rejected/)")
-        review(root, decision=decision, pmids=[pmid], notes=notes or None)
+            raise ReviewError(f"{id_} è già stato rifiutato (rejected/)")
+        review(root, decision=decision, ids=[id_], notes=notes or None)
         result["changed"] = True
         result["reply"] = (
-            f"✅ PMID {pmid} approvato."
+            f"✅ `{id_}` approvato."
             if decision == "approve"
-            else f"🚫 PMID {pmid} rifiutato e spostato in `rejected/` — motivo: {notes}"
+            else f"🚫 `{id_}` rifiutato e spostato in `rejected/` — motivo: {notes}"
         )
     except ReviewError as exc:
         result.update(ok=False, reply=f"Non applicato: {exc}")
