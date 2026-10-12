@@ -5,10 +5,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Final
 
-from .config import MappingConfig
-from .document import content_hash
-from .licenses import normalize_license
-from .models import (
+from aika_ingestion_common.document import content_hash
+from aika_ingestion_common.models import (
     SCHEMA_VERSION,
     Audience,
     ClassificationMethod,
@@ -16,8 +14,11 @@ from .models import (
     DocType,
     Modality,
     Population,
-    PubMedRecord,
 )
+
+from .config import MappingConfig
+from .licenses import normalize_license
+from .models import PubMedRecord
 
 # ISO 639-2 (PubMed) → ISO 639-1.
 _LANG_639_1: Final = {

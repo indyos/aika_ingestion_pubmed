@@ -11,8 +11,7 @@ from typing import Any
 
 import pytest
 import yaml
-
-from aika_ingestion_pubmed.document import parse_document
+from aika_ingestion_common.document import parse_document
 
 from .support import ROOT
 from .test_review_script import tree as tree

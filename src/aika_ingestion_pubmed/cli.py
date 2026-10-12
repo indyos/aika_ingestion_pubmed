@@ -9,16 +9,16 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import cast
 
+from aika_ingestion_common.corpus import CorpusWriter
+from aika_ingestion_common.github import GitHubAppHost, PullRequestHost
+from aika_ingestion_common.logging_setup import configure_logging, log_event
+from aika_ingestion_common.review import review_branch
+from aika_ingestion_common.schema import schema_text
 from dotenv import load_dotenv
 
 from .config import Secrets, load_config
-from .corpus import CorpusWriter
 from .eutils import EutilsClient
-from .github import GitHubAppHost, PullRequestHost
-from .logging_setup import configure_logging, log_event
 from .pipeline import Pipeline
-from .review import review_branch
-from .schema import schema_text
 
 logger = logging.getLogger(__name__)
 DEFAULT_SCHEMA_PATH = Path("schema/front_matter.schema.json")

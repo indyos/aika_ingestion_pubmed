@@ -9,22 +9,31 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+from aika_ingestion_common.corpus import Change, CorpusWriter
+from aika_ingestion_common.document import content_hash, render_document
+from aika_ingestion_common.github import PullRequestHost
+from aika_ingestion_common.logging_setup import log_event, log_fields
+from aika_ingestion_common.models import CurationStatus
+from aika_ingestion_common.quality import QualityGate
+
 from .builder import FrontMatterBuilder, pubmed_url
 from .config import Config
-from .corpus import Change, CorpusWriter
-from .document import content_hash, render_document
 from .eutils import EutilsClient
-from .github import PullRequestHost
 from .jats import JatsToMarkdown
-from .logging_setup import log_event, log_fields
-from .models import CurationStatus, PmcArticle, PubMedRecord
+from .models import PmcArticle, PubMedRecord
 from .pmc import PmcFullTextFetcher
 from .pubmed_parser import PubMedMetadataParser
-from .quality import QualityGate
 from .search import PubMedSearch
 from .xmlutil import parse_xml
 
 logger = logging.getLogger(__name__)
+
+_PMID_PREFIX = "pmid-"
+
+
+def _pmids(ids: set[str]) -> set[str]:
+    """PMID nudi dagli id del corpus (condiviso con altri connettori: i non-`pmid-` si ignorano)."""
+    return {i.removeprefix(_PMID_PREFIX) for i in ids if i.startswith(_PMID_PREFIX)}
 
 
 @dataclass
@@ -86,12 +95,14 @@ class Pipeline:
         stats = RunStats()
         token = self._host.access_token() if self._host else None
         self._corpus.fetch(token)
-        existing = self._corpus.existing_pmids()
-        self._rejected = self._corpus.rejected_pmids()
+        existing = _pmids(self._corpus.existing_ids())
+        self._rejected = _pmids(self._corpus.rejected_ids())
         in_open_pr = (
-            self._host.open_ingest_pmids(
-                self._cfg.corpus.branch_prefix,
-                (self._cfg.corpus.corpus_dir, self._cfg.corpus.rejected_dir),
+            _pmids(
+                self._host.open_ingest_ids(
+                    self._cfg.corpus.branch_prefix,
+                    (self._cfg.corpus.corpus_dir, self._cfg.corpus.rejected_dir),
+                )
             )
             if self._host
             else set[str]()
@@ -107,7 +118,7 @@ class Pipeline:
             candidates = self._filter(self._parser.parse(xml), existing, in_open_pr, seen, stats)
             prepared += self._process(candidates, existing, stats)
 
-        prepared.sort(key=lambda p: (p.change.front_matter.evidence_tier, p.change.pmid))
+        prepared.sort(key=lambda p: (p.change.front_matter.evidence_tier, p.record.pmid))
         stats.new = sum(p.change.status == "new" for p in prepared)
         stats.updated = sum(p.change.status == "updated" for p in prepared)
 
@@ -150,7 +161,7 @@ class Pipeline:
             return "rejected_in_corpus"
         try:
             if record.pmid in existing:
-                status = self._corpus.read(record.pmid).curation_status
+                status = self._corpus.read(f"pmid-{record.pmid}").curation_status
                 if status == CurationStatus.REJECTED.value:
                     return "rejected_in_corpus"
         except Exception as exc:  # documento illeggibile: non blocca il run
@@ -207,7 +218,7 @@ class Pipeline:
         root = parse_xml(article.xml)
         title = self._title(record, JatsToMarkdown.extract_title(root))
         body = self._jats.convert(root, title=title, fallback_abstract=record.abstract)
-        previous = self._corpus.read(record.pmid) if record.pmid in existing else None
+        previous = self._corpus.read(f"pmid-{record.pmid}") if record.pmid in existing else None
         draft = self._builder.build(
             record,
             pmcid=article.pmcid,
@@ -272,7 +283,7 @@ class Pipeline:
                 while f"{stem}{n}" in taken:
                     n += 1
                 branch = f"{stem}{n}"
-                files = {self._corpus.relative_path(c.pmid): c.text for c in batch}
+                files = {self._corpus.relative_path(c.id): c.text for c in batch}
                 title = f"Ingestion PubMed {today} #{n}: {len(batch)} documenti"
                 self._corpus.commit_branch(branch, files, title)
                 self._corpus.push(branch, token)
@@ -299,6 +310,7 @@ def pr_body(changes: list[Change]) -> str:
     ]
     for c in changes:
         fm = c.front_matter
+        pmid = fm.id.removeprefix(_PMID_PREFIX)
         cells = [
             f"`{fm.id}`",
             fm.title,
@@ -306,7 +318,7 @@ def pr_body(changes: list[Change]) -> str:
             ", ".join(m.value for m in fm.modality),
             ", ".join(fm.topics or []),
             c.status,
-            f"[{c.pmid}]({pubmed_url(c.pmid)})",
+            f"[{pmid}]({pubmed_url(pmid)})",
         ]
         lines.append("| " + " | ".join(x.replace("|", "\\|") for x in cells) + " |")
     lines += [

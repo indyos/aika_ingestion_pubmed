@@ -10,13 +10,13 @@ from pathlib import Path
 import jsonschema
 import pytest
 import yaml
+from aika_ingestion_common.corpus import CorpusWriter
+from aika_ingestion_common.document import parse_document
+from aika_ingestion_common.schema import front_matter_schema
 
 from aika_ingestion_pubmed.config import Config
-from aika_ingestion_pubmed.corpus import CorpusWriter
-from aika_ingestion_pubmed.document import parse_document
 from aika_ingestion_pubmed.jats import JatsToMarkdown
 from aika_ingestion_pubmed.pipeline import Pipeline, RunStats
-from aika_ingestion_pubmed.schema import front_matter_schema
 
 from .support import (
     FakeHost,
@@ -246,7 +246,7 @@ def test_suspended_documents_are_not_skipped(env: Env) -> None:
 
 def test_documents_in_open_prs_are_skipped(tmp_path: Path) -> None:
     env = Env(tmp_path)
-    env.host = FakeHost(open_pmids={"10000001"})
+    env.host = FakeHost(open_ids={"pmid-10000001"})
     stats = env.run()
     assert stats.excluded["in_open_pr"] == 1
     assert stats.new == 1
@@ -340,7 +340,7 @@ def test_run_is_deterministic_across_environments(tmp_path: Path) -> None:
 
 
 def test_structured_log_summary(env: Env, caplog: pytest.LogCaptureFixture) -> None:
-    from aika_ingestion_pubmed.logging_setup import JsonFormatter
+    from aika_ingestion_common.logging_setup import JsonFormatter
 
     with caplog.at_level(logging.INFO):
         env.run()

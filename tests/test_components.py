@@ -6,20 +6,20 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-
-from aika_ingestion_pubmed.builder import FrontMatterBuilder
-from aika_ingestion_pubmed.eutils import EutilsError
-from aika_ingestion_pubmed.licenses import normalize_license
-from aika_ingestion_pubmed.models import (
+from aika_ingestion_common.models import (
     ClassificationMethod,
     DocType,
     Modality,
     Population,
-    PubMedRecord,
 )
+from aika_ingestion_common.quality import QualityGate
+
+from aika_ingestion_pubmed.builder import FrontMatterBuilder
+from aika_ingestion_pubmed.eutils import EutilsError
+from aika_ingestion_pubmed.licenses import normalize_license
+from aika_ingestion_pubmed.models import PubMedRecord
 from aika_ingestion_pubmed.pmc import PmcFullTextFetcher, parse_article_set
 from aika_ingestion_pubmed.pubmed_parser import PubMedMetadataParser
-from aika_ingestion_pubmed.quality import QualityGate
 from aika_ingestion_pubmed.search import PubMedSearch
 
 from .support import FakeNcbi, make_config, read_fixture

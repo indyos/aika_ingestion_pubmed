@@ -8,9 +8,14 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from aika_ingestion_common.config import (
+    CorpusConfig,
+    GitHubSecrets,
+    OriginalsConfig,
+    QualityConfig,
+)
+from aika_ingestion_common.models import DocType, Modality
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-
-from .models import DocType, Modality
 
 
 class _Strict(BaseModel):
@@ -71,42 +76,6 @@ class MappingConfig(_Strict):
         return self
 
 
-class QualityConfig(_Strict):
-    min_body_chars: int = Field(default=1500, ge=0)
-    allowed_languages: list[str] = Field(default_factory=lambda: ["en", "it"])
-    allowed_licenses: list[str] = Field(
-        default_factory=lambda: [
-            "CC0-1.0",
-            "CC-BY-4.0",
-            "CC-BY-3.0",
-            "CC-BY-SA-4.0",
-            "CC-BY-SA-3.0",
-        ]
-    )
-
-
-class CorpusConfig(_Strict):
-    repo: str = Field(pattern=r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
-    local_path: Path
-    remote: str = "origin"
-    base_branch: str = "main"
-    corpus_dir: str = "corpus"  # solo documenti approvati (dopo la revisione in PR)
-    rejected_dir: str = "rejected"  # documenti rifiutati: memoria per non riproporli
-    max_pr_size: int = Field(default=20, ge=1)
-    branch_prefix: str = "ingest/"
-    git_user_name: str = "aika-ingestion-bot"
-    git_user_email: str = "aika-ingestion-bot@users.noreply.github.com"
-
-
-class OriginalsConfig(_Strict):
-    """Dove salvare gli XML originali (v1: directory locale)."""
-
-    dir: Path
-    # Prefisso dell'URI scritto in `original_uri` (es. gs://bucket/pubmed). Se assente si usa
-    # l'URI file:// della directory locale.
-    base_uri: str | None = None
-
-
 class Config(_Strict):
     ncbi: NcbiConfig
     search: SearchConfig
@@ -121,28 +90,13 @@ def load_config(path: Path) -> Config:
     return Config.model_validate(raw)
 
 
-class Secrets(_Strict):
-    """Segreti letti dall'ambiente; mai dal file di configurazione."""
+class Secrets(GitHubSecrets):
+    """Segreti generici della GitHub App più la chiave NCBI; mai dal file di configurazione."""
 
     ncbi_api_key: str | None = None
-    github_app_id: str | None = None
-    github_installation_id: str | None = None
-    github_private_key: str | None = None
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> Secrets:
         e = os.environ if env is None else env
-        key = e.get("GITHUB_APP_PRIVATE_KEY")
-        key_path = e.get("GITHUB_APP_PRIVATE_KEY_PATH")
-        if key is None and key_path:
-            key = Path(key_path).read_text(encoding="utf-8")
-        return cls(
-            ncbi_api_key=e.get("NCBI_API_KEY") or None,
-            github_app_id=e.get("GITHUB_APP_ID") or None,
-            github_installation_id=e.get("GITHUB_APP_INSTALLATION_ID") or None,
-            github_private_key=key or None,
-        )
-
-    @property
-    def has_github_app(self) -> bool:
-        return bool(self.github_app_id and self.github_installation_id and self.github_private_key)
+        base = GitHubSecrets.from_env(e)
+        return cls(**base.model_dump(), ncbi_api_key=e.get("NCBI_API_KEY") or None)

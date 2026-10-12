@@ -7,10 +7,9 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
-
-from aika_ingestion_pubmed.document import parse_document
-from aika_ingestion_pubmed.models import CurationStatus
-from aika_ingestion_pubmed.review import _decided  # pyright: ignore[reportPrivateUsage]
+from aika_ingestion_common.document import parse_document
+from aika_ingestion_common.models import CurationStatus
+from aika_ingestion_common.review import _decided  # pyright: ignore[reportPrivateUsage]
 
 from .support import ROOT
 from .test_review import _validator
@@ -42,7 +41,7 @@ def tree(tmp_path: Path) -> Path:
             show(env.origin, "ingest/2026-09-26-pubmed-1", rel), encoding="utf-8", newline="\n"
         )
     (root / "schema").mkdir()
-    from aika_ingestion_pubmed.schema import schema_text
+    from aika_ingestion_common.schema import schema_text
 
     (root / "schema" / "front_matter.schema.json").write_text(schema_text(), encoding="utf-8")
     return root

@@ -198,13 +198,13 @@ def branches(origin: Path) -> list[str]:
 
 
 class FakeHost:
-    def __init__(self, open_pmids: set[str] | None = None) -> None:
-        self.open_pmids = open_pmids or set()
+    def __init__(self, open_ids: set[str] | None = None) -> None:
+        self.open_ids = open_ids or set()
         self.created: list[dict[str, str]] = []
         self.fail: Callable[[], None] | None = None
 
-    def open_ingest_pmids(self, branch_prefix: str, dirs: Sequence[str]) -> set[str]:
-        return set(self.open_pmids)
+    def open_ingest_ids(self, branch_prefix: str, dirs: Sequence[str]) -> set[str]:
+        return set(self.open_ids)
 
     def access_token(self) -> str | None:
         return None

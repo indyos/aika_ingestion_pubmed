@@ -54,6 +54,396 @@
       "title": "Modality",
       "type": "string"
     },
+    "PdfFrontMatter": {
+      "additionalProperties": false,
+      "description": "``corpus/pdf-<ente>-<titolo>.md`` — connettore ``aika_ingestion_pdf``.\n\nNessun anno nello slug per scelta esplicita: una nuova edizione dello stesso documento\n**sostituisce sempre** la precedente (stesso `id`), non convive con essa — vedi `CLAUDE.md`.",
+      "properties": {
+        "schema_version": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^pdf-[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "source_type": {
+          "const": "pdf",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_uri": {
+          "minLength": 1,
+          "title": "Source Uri",
+          "type": "string"
+        },
+        "original_uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Uri"
+        },
+        "language": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Language",
+          "type": "string"
+        },
+        "doc_type": {
+          "$ref": "#/$defs/DocType"
+        },
+        "evidence_tier": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Evidence Tier",
+          "type": "integer"
+        },
+        "classification_method": {
+          "$ref": "#/$defs/ClassificationMethod"
+        },
+        "modality": {
+          "items": {
+            "$ref": "#/$defs/Modality"
+          },
+          "minItems": 1,
+          "title": "Modality",
+          "type": "array"
+        },
+        "population": {
+          "$ref": "#/$defs/Population"
+        },
+        "audience": {
+          "$ref": "#/$defs/Audience"
+        },
+        "topics": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topics"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "retracted": {
+          "default": false,
+          "title": "Retracted",
+          "type": "boolean"
+        },
+        "curation_status": {
+          "$ref": "#/$defs/CurationStatus"
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Notes"
+        },
+        "content_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "provided_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provided By"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "source_type",
+        "source_uri",
+        "language",
+        "doc_type",
+        "evidence_tier",
+        "classification_method",
+        "modality",
+        "population",
+        "audience",
+        "license",
+        "curation_status",
+        "content_hash",
+        "retrieved_at"
+      ],
+      "title": "PdfFrontMatter",
+      "type": "object"
+    },
+    "PmcFullTextFrontMatter": {
+      "additionalProperties": false,
+      "description": "``corpus/pmid-<PMID>.md`` — full text PMC (Open Access). Stesso contratto sostanziale del\nconnettore pubmed v1; ``aika_ingestion_pubmed`` non lo consuma ancora (vedi docstring modulo).",
+      "properties": {
+        "schema_version": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^pmid-[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "source_type": {
+          "const": "pmc_fulltext",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_uri": {
+          "minLength": 1,
+          "title": "Source Uri",
+          "type": "string"
+        },
+        "original_uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Uri"
+        },
+        "language": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Language",
+          "type": "string"
+        },
+        "doc_type": {
+          "$ref": "#/$defs/DocType"
+        },
+        "evidence_tier": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Evidence Tier",
+          "type": "integer"
+        },
+        "classification_method": {
+          "$ref": "#/$defs/ClassificationMethod"
+        },
+        "modality": {
+          "items": {
+            "$ref": "#/$defs/Modality"
+          },
+          "minItems": 1,
+          "title": "Modality",
+          "type": "array"
+        },
+        "population": {
+          "$ref": "#/$defs/Population"
+        },
+        "audience": {
+          "$ref": "#/$defs/Audience"
+        },
+        "topics": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topics"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "retracted": {
+          "title": "Retracted",
+          "type": "boolean"
+        },
+        "curation_status": {
+          "$ref": "#/$defs/CurationStatus"
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Notes"
+        },
+        "content_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "pmid": {
+          "pattern": "^[0-9]+$",
+          "title": "Pmid",
+          "type": "string"
+        },
+        "pmcid": {
+          "pattern": "^PMC[0-9]+$",
+          "title": "Pmcid",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "authors": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authors"
+        },
+        "journal": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Journal"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published"
+        },
+        "mesh_terms": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mesh Terms"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "source_type",
+        "source_uri",
+        "language",
+        "doc_type",
+        "evidence_tier",
+        "classification_method",
+        "modality",
+        "population",
+        "audience",
+        "license",
+        "retracted",
+        "curation_status",
+        "content_hash",
+        "retrieved_at",
+        "pmid",
+        "pmcid"
+      ],
+      "title": "PmcFullTextFrontMatter",
+      "type": "object"
+    },
     "Population": {
       "enum": [
         "adult",
@@ -63,242 +453,403 @@
       ],
       "title": "Population",
       "type": "string"
-    }
-  },
-  "additionalProperties": false,
-  "description": "Front matter YAML di ``corpus/pmid-<PMID>.md``.\n\nL'ordine di definizione dei campi è l'ordine **fisso** delle chiavi nel file.\nLe chiavi opzionali vuote vengono omesse in serializzazione.",
-  "properties": {
-    "schema_version": {
-      "default": 1,
-      "minimum": 1,
-      "title": "Schema Version",
-      "type": "integer"
     },
-    "id": {
-      "pattern": "^pmid-[0-9]+$",
-      "title": "Id",
-      "type": "string"
-    },
-    "title": {
-      "minLength": 1,
-      "title": "Title",
-      "type": "string"
-    },
-    "source_type": {
-      "const": "pmc_fulltext",
-      "title": "Source Type",
-      "type": "string"
-    },
-    "source_uri": {
-      "minLength": 1,
-      "title": "Source Uri",
-      "type": "string"
-    },
-    "original_uri": {
-      "minLength": 1,
-      "title": "Original Uri",
-      "type": "string"
-    },
-    "pmid": {
-      "anyOf": [
-        {
+    "PubmedAbstractFrontMatter": {
+      "additionalProperties": false,
+      "description": "Record PubMed senza full text PMC aperto (solo abstract).\n\n**Abbozzata in anticipo**, come previsto per lo schema v2 (unione discriminata completa fin da\nsubito, vedi `CLAUDE.md` di `aika_ingestion_pdf`) — nessun connettore la produce ancora oggi\n(`aika_ingestion_pubmed` v1 ingerisce solo full text PMC). Da rivedere quando/se servirà davvero.",
+      "properties": {
+        "schema_version": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^pmid-[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "source_type": {
+          "const": "pubmed_abstract",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_uri": {
+          "minLength": 1,
+          "title": "Source Uri",
+          "type": "string"
+        },
+        "original_uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Uri"
+        },
+        "language": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Language",
+          "type": "string"
+        },
+        "doc_type": {
+          "$ref": "#/$defs/DocType"
+        },
+        "evidence_tier": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Evidence Tier",
+          "type": "integer"
+        },
+        "classification_method": {
+          "$ref": "#/$defs/ClassificationMethod"
+        },
+        "modality": {
+          "items": {
+            "$ref": "#/$defs/Modality"
+          },
+          "minItems": 1,
+          "title": "Modality",
+          "type": "array"
+        },
+        "population": {
+          "$ref": "#/$defs/Population"
+        },
+        "audience": {
+          "$ref": "#/$defs/Audience"
+        },
+        "topics": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topics"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "retracted": {
+          "title": "Retracted",
+          "type": "boolean"
+        },
+        "curation_status": {
+          "$ref": "#/$defs/CurationStatus"
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Notes"
+        },
+        "content_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "pmid": {
           "pattern": "^[0-9]+$",
+          "title": "Pmid",
           "type": "string"
         },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Pmid"
-    },
-    "pmcid": {
-      "anyOf": [
-        {
-          "pattern": "^PMC[0-9]+$",
-          "type": "string"
+        "doi": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
         },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Pmcid"
-    },
-    "doi": {
-      "anyOf": [
-        {
-          "minLength": 1,
-          "type": "string"
+        "authors": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authors"
         },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Doi"
-    },
-    "authors": {
-      "anyOf": [
-        {
-          "items": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "type": "array"
+        "journal": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Journal"
         },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Authors"
-    },
-    "journal": {
-      "anyOf": [
-        {
-          "minLength": 1,
-          "type": "string"
+        "published": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published"
         },
-        {
-          "type": "null"
+        "mesh_terms": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mesh Terms"
         }
-      ],
-      "default": null,
-      "title": "Journal"
-    },
-    "published": {
-      "anyOf": [
-        {
-          "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$",
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Published"
-    },
-    "language": {
-      "pattern": "^[a-z]{2}$",
-      "title": "Language",
-      "type": "string"
-    },
-    "doc_type": {
-      "$ref": "#/$defs/DocType"
-    },
-    "evidence_tier": {
-      "maximum": 5,
-      "minimum": 1,
-      "title": "Evidence Tier",
-      "type": "integer"
-    },
-    "classification_method": {
-      "$ref": "#/$defs/ClassificationMethod"
-    },
-    "modality": {
-      "items": {
-        "$ref": "#/$defs/Modality"
       },
-      "minItems": 1,
-      "title": "Modality",
-      "type": "array"
-    },
-    "population": {
-      "$ref": "#/$defs/Population"
-    },
-    "audience": {
-      "$ref": "#/$defs/Audience"
-    },
-    "topics": {
-      "anyOf": [
-        {
-          "items": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "type": "array"
-        },
-        {
-          "type": "null"
-        }
+      "required": [
+        "id",
+        "title",
+        "source_type",
+        "source_uri",
+        "language",
+        "doc_type",
+        "evidence_tier",
+        "classification_method",
+        "modality",
+        "population",
+        "audience",
+        "license",
+        "retracted",
+        "curation_status",
+        "content_hash",
+        "retrieved_at",
+        "pmid"
       ],
-      "default": null,
-      "title": "Topics"
+      "title": "PubmedAbstractFrontMatter",
+      "type": "object"
     },
-    "mesh_terms": {
-      "anyOf": [
-        {
-          "items": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "type": "array"
+    "WebFrontMatter": {
+      "additionalProperties": false,
+      "description": "Connettore ``aika_ingestion_web``, non ancora progettato né avviato.\n\n**Solo un placeholder minimo**, abbozzato ora perché l'unione discriminata sia completa fin da\nsubito (`source_type: web` è già previsto in `aika_chunking`) — non è un design fatto, va\nrivisto per intero quando quel connettore verrà effettivamente progettato.",
+      "properties": {
+        "schema_version": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Schema Version",
+          "type": "integer"
         },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Mesh Terms"
-    },
-    "license": {
-      "minLength": 1,
-      "title": "License",
-      "type": "string"
-    },
-    "retracted": {
-      "title": "Retracted",
-      "type": "boolean"
-    },
-    "curation_status": {
-      "$ref": "#/$defs/CurationStatus"
-    },
-    "review_notes": {
-      "anyOf": [
-        {
-          "minLength": 1,
+        "id": {
+          "pattern": "^web-[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
           "type": "string"
         },
-        {
-          "type": "null"
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "source_type": {
+          "const": "web",
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_uri": {
+          "minLength": 1,
+          "title": "Source Uri",
+          "type": "string"
+        },
+        "original_uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Uri"
+        },
+        "language": {
+          "pattern": "^[a-z]{2}$",
+          "title": "Language",
+          "type": "string"
+        },
+        "doc_type": {
+          "$ref": "#/$defs/DocType"
+        },
+        "evidence_tier": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Evidence Tier",
+          "type": "integer"
+        },
+        "classification_method": {
+          "$ref": "#/$defs/ClassificationMethod"
+        },
+        "modality": {
+          "items": {
+            "$ref": "#/$defs/Modality"
+          },
+          "minItems": 1,
+          "title": "Modality",
+          "type": "array"
+        },
+        "population": {
+          "$ref": "#/$defs/Population"
+        },
+        "audience": {
+          "$ref": "#/$defs/Audience"
+        },
+        "topics": {
+          "anyOf": [
+            {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topics"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "retracted": {
+          "default": false,
+          "title": "Retracted",
+          "type": "boolean"
+        },
+        "curation_status": {
+          "$ref": "#/$defs/CurationStatus"
+        },
+        "review_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Notes"
+        },
+        "content_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "title": "Retrieved At",
+          "type": "string"
         }
+      },
+      "required": [
+        "id",
+        "title",
+        "source_type",
+        "source_uri",
+        "language",
+        "doc_type",
+        "evidence_tier",
+        "classification_method",
+        "modality",
+        "population",
+        "audience",
+        "license",
+        "curation_status",
+        "content_hash",
+        "retrieved_at"
       ],
-      "default": null,
-      "title": "Review Notes"
-    },
-    "content_hash": {
-      "pattern": "^sha256:[0-9a-f]{64}$",
-      "title": "Content Hash",
-      "type": "string"
-    },
-    "retrieved_at": {
-      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
-      "title": "Retrieved At",
-      "type": "string"
+      "title": "WebFrontMatter",
+      "type": "object"
     }
   },
-  "required": [
-    "id",
-    "title",
-    "source_type",
-    "source_uri",
-    "original_uri",
-    "language",
-    "doc_type",
-    "evidence_tier",
-    "classification_method",
-    "modality",
-    "population",
-    "audience",
-    "license",
-    "retracted",
-    "curation_status",
-    "content_hash",
-    "retrieved_at"
+  "discriminator": {
+    "mapping": {
+      "pdf": "#/$defs/PdfFrontMatter",
+      "pmc_fulltext": "#/$defs/PmcFullTextFrontMatter",
+      "pubmed_abstract": "#/$defs/PubmedAbstractFrontMatter",
+      "web": "#/$defs/WebFrontMatter"
+    },
+    "propertyName": "source_type"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PmcFullTextFrontMatter"
+    },
+    {
+      "$ref": "#/$defs/PubmedAbstractFrontMatter"
+    },
+    {
+      "$ref": "#/$defs/PdfFrontMatter"
+    },
+    {
+      "$ref": "#/$defs/WebFrontMatter"
+    }
   ],
-  "title": "Aika corpus document front matter",
-  "type": "object",
-  "$schema": "https://json-schema.org/draft/2020-12/schema"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/aika/front_matter.schema.json",
+  "title": "Aika corpus document front matter (schema v2)"
 }

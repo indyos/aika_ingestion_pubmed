@@ -7,11 +7,10 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
-
-from aika_ingestion_pubmed.corpus import CorpusWriter
-from aika_ingestion_pubmed.document import content_hash, parse_document
-from aika_ingestion_pubmed.review import ReviewError, review_branch
-from aika_ingestion_pubmed.schema import schema_text
+from aika_ingestion_common.corpus import CorpusWriter
+from aika_ingestion_common.document import content_hash, parse_document
+from aika_ingestion_common.review import ReviewError, review_branch
+from aika_ingestion_common.schema import schema_text
 
 from .support import branches, git, merge_branch_into_main, show
 from .test_pipeline import DOC1, DOC2, Env
@@ -59,8 +58,8 @@ def test_pending_documents_fail_ci_until_reviewed(env: Env, tmp_path: Path) -> N
 
 
 def test_approve_and_reject_produce_a_mergeable_tree(env: Env, tmp_path: Path) -> None:
-    _review(env, approve=["10000001"])
-    _review(env, reject=["10000002"], notes="fuori tema: non riguarda la dieta")
+    _review(env, approve=["pmid-10000001"])
+    _review(env, reject=["pmid-10000002"], notes="fuori tema: non riguarda la dieta")
 
     doc1 = parse_document(show(env.origin, BRANCH, DOC1))
     assert doc1.curation_status == "approved"
@@ -78,28 +77,30 @@ def test_approve_and_reject_produce_a_mergeable_tree(env: Env, tmp_path: Path) -
 
 
 def test_approve_all_pending_skips_explicit_rejections(env: Env) -> None:
-    _review(env, reject=["10000002"], notes="non pertinente")
+    _review(env, reject=["pmid-10000002"], notes="non pertinente")
     _review(env, approve_all_pending=True)
     assert parse_document(show(env.origin, BRANCH, DOC1)).curation_status == "approved"
 
 
 def test_review_errors(env: Env) -> None:
     with pytest.raises(ReviewError, match="motivazione"):
-        _review(env, reject=["10000002"])
+        _review(env, reject=["pmid-10000002"])
     with pytest.raises(ReviewError, match="non presenti"):
-        _review(env, approve=["99999999"])
+        _review(env, approve=["pmid-99999999"])
     with pytest.raises(ReviewError, match="sia approvati sia rifiutati"):
-        _review(env, approve=["10000001"], reject=["10000001"], notes="x")
+        _review(env, approve=["pmid-10000001"], reject=["pmid-10000001"], notes="x")
     with pytest.raises(ReviewError, match="nessun documento"):
         _review(env)
     with pytest.raises(ReviewError, match="non in main"):
-        review_branch(CorpusWriter(env.config.corpus), env.config.corpus, "main", approve=["1"])
+        review_branch(
+            CorpusWriter(env.config.corpus), env.config.corpus, "main", approve=["pmid-1"]
+        )
     assert git(env.clone, "status", "--porcelain") == ""
 
 
 def test_rejected_pmid_is_not_proposed_again(env: Env) -> None:
-    _review(env, approve=["10000001"])
-    _review(env, reject=["10000002"], notes="non pertinente")
+    _review(env, approve=["pmid-10000001"])
+    _review(env, reject=["pmid-10000002"], notes="non pertinente")
     merge_branch_into_main(env.origin, BRANCH)
     assert branches(env.origin)  # branch della PR ancora presente
     stats = env.run()
@@ -108,8 +109,8 @@ def test_rejected_pmid_is_not_proposed_again(env: Env) -> None:
 
 
 def test_ci_rejects_bad_files(env: Env, tmp_path: Path) -> None:
-    _review(env, approve=["10000001"])
-    _review(env, reject=["10000002"], notes="non pertinente")
+    _review(env, approve=["pmid-10000001"])
+    _review(env, reject=["pmid-10000002"], notes="non pertinente")
     validate = _validator()
     root = _tree(env, tmp_path, [DOC1, REJ2])
     schema = __import__("json").loads((root / "schema/front_matter.schema.json").read_text("utf-8"))

@@ -14,8 +14,7 @@ from collections.abc import Callable, Mapping
 from typing import Final
 
 import httpx
-
-from .logging_setup import log_event
+from aika_ingestion_common.logging_setup import log_event
 
 logger = logging.getLogger(__name__)
 

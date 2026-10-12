@@ -10,7 +10,7 @@ sempre `curation_status: pending`; l'approvazione è del revisore clinico, **in 
 
 ## Stato (2026-09-27)
 
-v1 completa e testata (179 test verdi). **In uso contro NCBI e GitHub reali** dal 2026-09-26:
+v1 completa e testata (151 test verdi dopo la migrazione a `aika_ingestion_common`, 2026-10-12). **In uso contro NCBI e GitHub reali** dal 2026-09-26:
 
 - Repo corpus: `indyos/aika_doc_ingestion` (privato, piano gratuito), clone in `../aika_doc_ingestion`.
   GitHub App `aika-doc-ingestion-auth` (App ID in `.env`, permessi Contents + Pull requests, read & write).
@@ -52,13 +52,20 @@ ambiente, in locale anche da **`.env`** nella cwd (gitignorato; caricato da `cli
 
 ## Architettura (src/aika_ingestion_pubmed/)
 
+Dal 2026-10-12 la parte generica vive in **`../aika_ingestion_common`** (path dependency editabile, come
+`aika_ingestion_pdf`): modelli/enum/`PmcFullTextFrontMatter` (**schema v2**), `document`, `schema`,
+`quality.QualityGate`, `review.review_branch`, `github`, `corpus.CorpusWriter`/`Change`, `logging_setup`,
+`config` (`CorpusConfig`/`QualityConfig`/`OriginalsConfig`/`GitHubSecrets`). Qui restano solo:
+
 `eutils.py` EutilsClient · `search.py` PubMedSearch · `pubmed_parser.py` · `pmc.py` PmcFullTextFetcher
 · `jats.py` JatsToMarkdown (+ `inline.py` rendering inline condiviso) · `builder.py` FrontMatterBuilder
-(+ `licenses.py`) · `quality.py` QualityGate · `document.py` (serializzazione, hash, parse) ·
-`corpus.py` CorpusWriter (git via subprocess; incluse le primitive per la revisione: `open_branch`,
-`branch_pmids`, `read_file`, `commit_changes`) · `review.py` (approve/reject nel branch di una PR) ·
-`github.py` GitHubAppHost · `pipeline.py` (flusso) · `cli.py`, `config.py`, `models.py` (Pydantic →
-JSON Schema), `schema.py`, `xmlutil.py`, `logging_setup.py`.
+(+ `licenses.py`) · `pipeline.py` (flusso) · `cli.py` (wrapper su `review_branch`/`schema_text`),
+`config.py` (query/mapping + `Secrets(GitHubSecrets)` con `ncbi_api_key`), `models.py` (solo dataclass di
+dominio `PubMedRecord`/`AbstractSection`/`PmcArticle`), `xmlutil.py`.
+
+Attenzione: gli id del corpus condiviso hanno prefisso (`pmid-123`); `pipeline._pmids()` li riporta a PMID
+nudi al confine e ignora i non-`pmid-` (es. `pdf-*`). Nuovi documenti ⇒ `schema_version: 2`, chiavi in ordine
+v2 (campi specifici dopo la «spina dorsale»); i documenti v1 già nel corpus restano validi (additivo).
 
 `corpus_ci/` (root del progetto, **non** in `src/`): sorgenti degli script e dei workflow GitHub Actions
 da installare nel repository corpus (vedi sezione successiva). Non fa parte del pacchetto Python; ha
